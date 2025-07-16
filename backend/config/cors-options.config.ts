@@ -8,6 +8,6 @@ export const corsOptions = {
     'Accept',
     'Authorization',
   ],
-  credential: true,
+  credentials: true,
   optionSuccessStatus: 200,
 };

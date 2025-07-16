@@ -1,7 +1,7 @@
 import { IParameter } from '../interfaces/parameter.interface';
 import { httpService } from './http.service';
 
-const parameterEndPoint = 'indicator/';
+const parameterEndPoint = 'parameters';
 
 const parameterService = {
 	findAll: async (): Promise<IParameter[]> => {

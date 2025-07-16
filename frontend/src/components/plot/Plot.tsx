@@ -7,20 +7,28 @@ import {
 	defaultChartOptions,
 } from '../../config/chart.config';
 import { useChartData } from '../../hooks/useChartData';
+import useParameterStore from '../../store/parameters.store';
 
 registerChartJS();
 
-interface PlotProps {
-	indicatorId: number;
-}
+export const Plot: React.FC = () => {
+	const { selectedPlotId } = useParameterStore();
+	const { IParameter: parameterData, chartData } =
+		useChartData(selectedPlotId);
 
-export const Plot: React.FC<PlotProps> = ({ indicatorId }) => {
-	const { indicatorData, chartData } = useChartData(indicatorId);
-
-	if (!indicatorData || !chartData) {
+	if (!parameterData || !chartData) {
 		return (
-			<div style={{ color: 'red', textAlign: 'center', padding: '20px' }}>
-				Показатель с ID "{indicatorId}" не найден.
+			<div
+				className="plot-container"
+				style={{
+					display: 'flex',
+					justifyContent: 'center',
+					alignItems: 'center',
+					color: 'black',
+					fontSize: '40px',
+				}}
+			>
+				Loading
 			</div>
 		);
 	}

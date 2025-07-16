@@ -1,19 +1,24 @@
 import { useMemo } from 'react';
-import jsonData from '../../src/components/data.json'; // Путь к вашему JSON-файлу
-import { IParameter } from '../interfaces/parameter.interface'; // Импортируем типы
+import { IParameter } from '../interfaces/parameter.interface';
+import useParameterStore from '../store/parameters.store';
 
-export const useChartData = (indicatorId: number) => {
-	const indicatorData = jsonData.find(
-		(item: IParameter) => item.id === indicatorId,
-	);
+export const useChartData = (parameterId: number | null) => {
+	const { parameters } = useParameterStore();
+
+	const parameterData = useMemo(() => {
+		if (parameterId === null) {
+			return null;
+		}
+		return parameters.find((item: IParameter) => item.id === parameterId);
+	}, [parameterId, parameters]);
 
 	const chartData = useMemo(() => {
-		if (!indicatorData) {
+		if (!parameterData || !parameterData.meanings) {
 			return null;
 		}
 
-		const labels = Object.keys(indicatorData.meanings).map(String);
-		const dataValues = Object.values(indicatorData.meanings);
+		const labels = Object.keys(parameterData.meanings).map(String);
+		const dataValues = Object.values(parameterData.meanings);
 
 		return {
 			labels: labels,
@@ -26,7 +31,7 @@ export const useChartData = (indicatorId: number) => {
 				},
 			],
 		};
-	}, [indicatorData]);
+	}, [parameterData]);
 
-	return { indicatorData, chartData };
+	return { IParameter: parameterData, chartData };
 };

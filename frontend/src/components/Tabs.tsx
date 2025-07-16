@@ -1,26 +1,37 @@
-import React, { useState } from 'react';
+import { useEffect } from 'react';
 import './Tabs.css';
+import useParameterStore from '../store/parameters.store';
 
 export const Tabs = () => {
-	const [activeTab, setActiveTab] = useState('Газ (вал.)');
+	const { selectedPlotId, setSelectedPlotId } = useParameterStore();
 
-	const properties = {
-		'Газ (вал.)': String,
-		'Конденсат (нестаб.)': String,
-		Пик: String,
+	const tabButtons = [
+		{ id: 1, name: 'Газ (вал.)' },
+		{ id: 3, name: 'Конденсат (нестаб.)' },
+		{ id: 6, name: 'Пик' },
+	];
+
+	useEffect(() => {
+		if (selectedPlotId === null && tabButtons.length > 0) {
+			setSelectedPlotId(tabButtons[0].id);
+		}
+	}, [selectedPlotId, setSelectedPlotId, tabButtons]);
+
+	const handleTabClick = (paramId: number) => {
+		setSelectedPlotId(paramId);
 	};
 
 	return (
 		<div className="tab-container">
-			{Object.keys(properties).map(option => (
+			{tabButtons.map((button) => (
 				<button
-					key={option}
+					key={button.id}
 					className={`tab ${
-						activeTab === option ? 'selected' : 'disabled'
+						selectedPlotId === button.id ? 'selected' : 'disabled'
 					}`}
-					onClick={() => setActiveTab(option)}
+					onClick={() => handleTabClick(button.id)}
 				>
-					{option}
+					{button.name}
 				</button>
 			))}
 		</div>

@@ -19,7 +19,7 @@ function App() {
 				<Tabs />
 				<hr></hr>
 				<div className="lower-container">
-					<Plot indicatorId={1} />
+					<Plot />
 					<SaveButton />
 				</div>
 			</div>

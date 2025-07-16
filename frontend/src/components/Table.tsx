@@ -1,78 +1,46 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import './Table.css';
-import axios, { AxiosError } from 'axios';
-import { IParameter } from '../interfaces/parameter.interface';
+import useParameterStore from '../store/parameters.store';
 
 export const Table = () => {
-	const [results, setResult] = useState<IParameter[]>([]);
-	const [error, setError] = useState('');
+	const {
+		parameters,
+		error,
+		selectedRow,
+		fetchParameters,
+		updateParameter,
+		setSelectedRow,
+	} = useParameterStore();
+
 	const startYear = 2026;
 	const endYear = 2040;
 	const years = Array.from({ length: endYear - startYear + 1 }, (_, i) =>
 		String(startYear + i),
 	);
 
-	const [selectedRow, setSelectedRow] = useState(null);
-
-	const handleRowClick = (id: any, e: any) => {
-		setSelectedRow(id === selectedRow ? null : id);
+	const handleRowClick = (id: number) => {
+		setSelectedRow(id);
 		console.log(id);
 	};
 
-	//Retrieve
-	async function fetchIndicators() {
-		try {
-			setError('');
-			const response = await axios.get<IParameter[]>(
-				'http://localhost:3000/parameters',
-			);
-			if (response.data) setResult(response.data);
-		} catch (e: unknown) {
-			const error = e as AxiosError;
-			setError(error.message);
-			console.log({ error });
-		}
-	}
-
 	useEffect(() => {
-		fetchIndicators();
-	}, []);
+		fetchParameters();
+	}, [fetchParameters]);
 
-	const [val, setValue] = useState<IParameter[]>(results);
-
-	const handleCellChange = (id: number, year: string, value: any) => {
-		setValue((prevResults: IParameter[]) =>
-			prevResults.map((r) =>
-				r.id === id
-					? {
-							...r,
-							meanings: {
-								...r.meanings,
-								[year]: value,
-							},
-					  }
-					: r,
-			),
-		);
+	const handleCellChange = (id: number, year: string, value: string) => {
+		let newValue: number | null = null;
+		if (value === '') {
+			newValue = null;
+		} else {
+			const numericValue = parseFloat(value);
+			newValue = isNaN(numericValue) ? 0 : numericValue;
+		}
+		updateParameter(id, year, newValue);
 	};
 
-	// //Add
-	// const addIndicators = async (indicator) => {
-	// 	console.log(indicator);
-	// 	const request = {
-	// 		id: 0,
-	// 		...indicator,
-	// 	};
-	// 	const response = await api.post('/indicators', request);
-	// 	setData([...indicators, response.data]);
-	// };
-
-	// const removeIndicator = (id) => {
-	// 	const newList = addIndicators.filter((indicator) => {
-	// 		return indicator.id != id;
-	// 	});
-	// 	setData(newList);
-	// };
+	if (error) {
+		return <div>Произошла ошибка при загрузке данных.</div>;
+	}
 
 	return (
 		<div className="table__container">
@@ -90,13 +58,13 @@ export const Table = () => {
 						</tr>
 					</thead>
 					<tbody>
-						{results.map((r) => (
+						{parameters.map((r) => (
 							<tr
 								key={r.id}
 								className={
 									selectedRow === r.id ? 'selected-row' : ''
 								}
-								onClick={(e) => handleRowClick(r.id, e)}
+								onClick={() => handleRowClick(r.id)}
 							>
 								<td className="fixed table__measure col1">
 									{r.name}

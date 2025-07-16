@@ -1,24 +1,24 @@
 import { create } from 'zustand';
 import { IParameter } from '../interfaces/parameter.interface';
 import parameterService from '../services/parameter.service';
-// import { handleHttpError } from '../errors/handle-http.error';
-import { AxiosError } from 'axios';
 
 interface IUseParameterStore {
 	parameters: IParameter[];
-	selectedRow: IParameter | null;
+	selectedRow: number | null;
 	error: null | unknown;
-	clickedButton: number;
+	selectedPlotId: number | null;
 	fetchParameters: () => void;
+	setSelectedRow: (id: number) => void;
+	updateParameter: (id: number, year: string, value: any) => void;
+	setSelectedPlotId: (id: number | null) => void;
 	// createParameter: (parameter: Partial<IParameter>) => void;
-	// updateParameter: (id: number, parameter: Partial<IParameter>) => void;
 	// deleteParameter: (id: number) => void;
 }
 
 const useParameterStore = create<IUseParameterStore>((set) => ({
 	parameters: [],
 	selectedRow: null,
-	clickedButton: 1,
+	selectedPlotId: 1,
 	error: null,
 
 	fetchParameters: () => {
@@ -27,11 +27,35 @@ const useParameterStore = create<IUseParameterStore>((set) => ({
 			.findAll()
 			.then((parameters) => set({ parameters }))
 			.catch((error) => {
-				// handleHttpError(error, 'Ошибка при загрузке параметров');
-				const e = error as AxiosError;
 				console.log({ error });
 				set({ error });
 			});
+	},
+
+	setSelectedRow: (id) => {
+		set((state) => ({
+			selectedRow: state.selectedRow === id ? null : id,
+		}));
+	},
+
+	updateParameter: (id, year, value) => {
+		set((state) => ({
+			parameters: state.parameters.map((param) =>
+				param.id === id
+					? {
+							...param,
+							meanings: {
+								...param.meanings,
+								[year]: value,
+							},
+					  }
+					: param,
+			),
+		}));
+	},
+
+	setSelectedPlotId: (id) => {
+		set({ selectedPlotId: id });
 	},
 }));
 
