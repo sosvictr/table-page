@@ -1,0 +1,17 @@
+.icons {
+	display: flex;
+	height: 35px;
+}
+
+.icon-add {
+	width: 24px;
+	height: 24px;
+	margin-right: 5px;
+	cursor: pointer;
+}
+
+.icon-delete {
+	width: 20px;
+	height: 24px;
+	cursor: pointer;
+}

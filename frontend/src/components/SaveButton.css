@@ -1,0 +1,21 @@
+.button {
+	width: 145px;
+	height: 40px;
+	border-radius: 8px;
+	color: #0079c2;
+	border: 1px solid #0079c2;
+	background-color: transparent;
+	font-size: 14px;
+	font-weight: 700;
+	font-family: 'Open Sans', 'Roboto', Arial;
+	cursor: pointer;
+	order: 1;
+	position: absolute;
+	right: 38px;
+	bottom: 0;
+}
+
+.button:hover {
+	color: #fff;
+	background-color: #0079c2;
+}

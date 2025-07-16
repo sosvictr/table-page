@@ -1,0 +1,24 @@
+.tab-container {
+	display: flex;
+	justify-content: center;
+	padding-top: 29px;
+}
+
+.tab {
+	padding: 0 8px;
+	height: 36px;
+	border-radius: 10px;
+	font-size: 15px;
+	border: none;
+	cursor: pointer;
+}
+
+.selected {
+	background-color: #775da6;
+	color: #ffffff;
+}
+
+.disabled {
+	background-color: #ffffff;
+	color: #bcbcbc;
+}

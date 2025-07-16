@@ -1,0 +1,41 @@
+* {
+	font-family: 'Roboto', sans-serif, Arial;
+	padding: 0;
+	margin: 0;
+	box-sizing: border-box;
+}
+
+.head {
+	height: 76px;
+}
+
+.head__title {
+	font-size: 17px;
+	font-weight: 600;
+	padding-top: 32px;
+	padding-left: 29px;
+}
+
+.table-container {
+	padding-left: 29px;
+}
+
+hr {
+	width: 893px;
+	margin: 2px auto;
+	border: none;
+	height: 1px;
+	background-image: linear-gradient(
+		to right,
+		#d0d0d0 5px,
+		transparent 5px,
+		transparent 10px
+	);
+	background-size: 10px 1px;
+	background-repeat: repeat-x;
+}
+
+.lower-container {
+	position: relative;
+	display: flex;
+}
