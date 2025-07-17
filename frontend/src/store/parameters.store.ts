@@ -7,14 +7,11 @@ interface IUseParameterStore {
 	selectedRow: number | null;
 	error: null | unknown;
 	selectedPlotId: number | null;
-	focusedCellInput: { [key: string]: string };
 
 	fetchParameters: () => void;
 	setSelectedRow: (id: number) => void;
-	updateParameter: (id: number, year: string, value: any) => void;
+	updateParameter: (id: number, year: string, value: any | null) => void; // Уточнил тип value
 	setSelectedPlotId: (id: number | null) => void;
-	setFocusedCellValue: (key: string, value: string) => void;
-	clearFocusedCell: (key: string) => void;
 }
 
 const useParameterStore = create<IUseParameterStore>((set) => ({
@@ -22,7 +19,6 @@ const useParameterStore = create<IUseParameterStore>((set) => ({
 	selectedRow: null,
 	selectedPlotId: 1,
 	error: null,
-	focusedCellInput: {},
 
 	fetchParameters: () => {
 		set({ error: null });
@@ -59,23 +55,6 @@ const useParameterStore = create<IUseParameterStore>((set) => ({
 
 	setSelectedPlotId: (id) => {
 		set({ selectedPlotId: id });
-	},
-
-	setFocusedCellValue: (key, value) => {
-		set((state) => ({
-			focusedCellInput: {
-				...state.focusedCellInput,
-				[key]: value,
-			},
-		}));
-	},
-
-	clearFocusedCell: (key) => {
-		set((state) => {
-			const newFocusedCellInput = { ...state.focusedCellInput };
-			delete newFocusedCellInput[key];
-			return { focusedCellInput: newFocusedCellInput };
-		});
 	},
 }));
 
