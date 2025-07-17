@@ -7,9 +7,12 @@ export const Table = () => {
 		parameters,
 		error,
 		selectedRow,
+		focusedCellInput,
 		fetchParameters,
 		updateParameter,
 		setSelectedRow,
+		setFocusedCellValue,
+		clearFocusedCell,
 	} = useParameterStore();
 
 	const startYear = 2026;
@@ -28,14 +31,38 @@ export const Table = () => {
 	}, [fetchParameters]);
 
 	const handleCellChange = (id: number, year: string, value: string) => {
+		const cellKey = `${id}-${year}`;
+		setFocusedCellValue(cellKey, value);
+
 		let newValue: number | null = null;
 		if (value === '') {
 			newValue = null;
 		} else {
 			const numericValue = parseFloat(value);
-			newValue = isNaN(numericValue) ? 0 : numericValue;
+			newValue = isNaN(numericValue) ? null : numericValue;
 		}
 		updateParameter(id, year, newValue);
+	};
+
+	const handleCellFocus = (
+		id: number,
+		year: string,
+		currentValue: number | null,
+	) => {
+		const cellKey = `${id}-${year}`;
+		setFocusedCellValue(
+			cellKey,
+			currentValue === null ? '' : String(currentValue),
+		);
+	};
+
+	const handleCellBlur = (id: number, year: string, value: string) => {
+		const cellKey = `${id}-${year}`;
+		if (value === '') {
+			clearFocusedCell(cellKey);
+		} else {
+			clearFocusedCell(cellKey);
+		}
 	};
 
 	if (error) {
@@ -72,25 +99,50 @@ export const Table = () => {
 								<td className="fixed table__units col2">
 									{r.unit_name}
 								</td>
-								{years.map((year) => (
-									<td
-										className="scroll-cell"
-										key={`${r.id}-${year}`}
-									>
-										<input
-											type="text"
-											value={r.meanings?.[year] ?? '-'}
-											onChange={(e) =>
-												handleCellChange(
-													r.id,
-													year,
-													e.target.value,
-												)
-											}
-											className="cell-input"
-										/>
-									</td>
-								))}
+								{years.map((year) => {
+									const cellKey = `${r.id}-${year}`;
+									const displayValue =
+										focusedCellInput.hasOwnProperty(cellKey)
+											? focusedCellInput[cellKey]
+											: r.meanings?.[year] === null
+											? '-'
+											: String(r.meanings?.[year] ?? '-');
+
+									return (
+										<td
+											className="scroll-cell"
+											key={cellKey}
+										>
+											<input
+												type="text"
+												value={displayValue}
+												onChange={(e) =>
+													handleCellChange(
+														r.id,
+														year,
+														e.target.value,
+													)
+												}
+												onFocus={() =>
+													handleCellFocus(
+														r.id,
+														year,
+														r.meanings?.[year] ??
+															null,
+													)
+												}
+												onBlur={(e) =>
+													handleCellBlur(
+														r.id,
+														year,
+														e.target.value,
+													)
+												}
+												className="cell-input"
+											/>
+										</td>
+									);
+								})}
 							</tr>
 						))}
 					</tbody>
