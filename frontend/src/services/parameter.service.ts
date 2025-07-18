@@ -17,8 +17,8 @@ const parameterService = {
 	// 	await httpService.delete(`${parameterEndPoint}${id}`);
 	// }, //?????
 
-	save: async (): Promise<void> => {
-		await httpService.put(`${parameterEndPoint}`);
+	save: async (parametersToSave: IParameter[]): Promise<void> => {
+		await httpService.put(`${parameterEndPoint}`, parametersToSave);
 	},
 };
 

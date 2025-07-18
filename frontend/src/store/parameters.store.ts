@@ -10,7 +10,7 @@ interface IUseParameterStore {
 
 	fetchParameters: () => void;
 	setSelectedRow: (id: number) => void;
-	updateParameter: (id: number, year: string, value: any | null) => void; // Уточнил тип value
+	updateParameter: (id: number, year: string, value: any | null) => void;
 	setSelectedPlotId: (id: number | null) => void;
 }
 

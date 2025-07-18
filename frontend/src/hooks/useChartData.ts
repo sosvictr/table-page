@@ -17,8 +17,8 @@ export const useChartData = (parameterId: number | null) => {
 			return null;
 		}
 
-		const labels = Object.keys(parameterData.meanings).map(String);
-		const dataValues = Object.values(parameterData.meanings);
+		const dataValues = parameterData.meanings;
+		const labels = Object.keys(dataValues).map(String);
 
 		return {
 			labels: labels,
