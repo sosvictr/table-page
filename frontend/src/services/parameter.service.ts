@@ -9,24 +9,16 @@ const parameterService = {
 		return data;
 	},
 
-	create: async (parameter: Partial<IParameter>): Promise<IParameter> => {
-		const { data } = await httpService.post(parameterEndPoint, parameter);
-		return data;
-	},
+	// create: async (parameter: Partial<IParameter>): Promise<void> => {
+	// 	await httpService.post(parameterEndPoint, parameter);
+	// }, ///как?
 
-	update: async (
-		id: string,
-		parameter: Partial<IParameter>,
-	): Promise<IParameter> => {
-		const { data } = await httpService.patch(
-			`${parameterEndPoint}${id}`,
-			parameter,
-		);
-		return data;
-	},
+	// remove: async (id: string): Promise<void> => {
+	// 	await httpService.delete(`${parameterEndPoint}${id}`);
+	// }, //?????
 
-	remove: async (id: string): Promise<void> => {
-		await httpService.delete(`${parameterEndPoint}${id}`);
+	save: async (): Promise<void> => {
+		await httpService.put(`${parameterEndPoint}`);
 	},
 };
 

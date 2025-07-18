@@ -1,29 +1,30 @@
 import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreateParameterDTO } from './dto/create-parameter.dto';
-import * as fs from 'fs';
+import * as fs from 'fs/promises';
 import * as path from 'path';
-import { UpdateParameterDto } from './dto/update-parameter.dto';
 
 @Injectable()
 export class ParametersService {
-  addParameter(createParameter: CreateParameterDTO): void {
-    console.log(createParameter);
-    /// if (exist) {throw exception}
+  dataFilePath: string;
+
+  constructor() {
+    this.dataFilePath = path.join(
+      process.cwd(),
+      'src',
+      'parameterFromJSON',
+      'data.json',
+    );
   }
-  getAll() {
+
+  async readDataFromJSON(): Promise<CreateParameterDTO[]> {
     try {
-      const dataPath = path.join(
-        process.cwd(),
-        'src',
-        'parameterFromJSON',
-        'data.json',
-      );
-      if (!fs.existsSync(dataPath)) {
-        throw new Error(`File not found at path: ${dataPath}`);
+      try {
+        await fs.access(this.dataFilePath);
+      } catch (error) {
+        console.warn(`Файл data.json не найден по пути: ${this.dataFilePath}.`);
       }
-      const rawData = fs.readFileSync(dataPath, 'utf8');
-      const data = JSON.parse(rawData) as CreateParameterDTO[];
-      return data;
+      const rawData = await fs.readFile(this.dataFilePath, 'utf8');
+      return JSON.parse(rawData) as CreateParameterDTO[];
     } catch (error) {
       console.error('Ошибка при чтении data.json:', error);
       throw new InternalServerErrorException(
@@ -32,12 +33,32 @@ export class ParametersService {
     }
   }
 
-  update(id: number, updateParameter: UpdateParameterDto): void {
-    console.log(`Change parameter id ${id}`);
-    console.log(updateParameter);
+  async getAll(): Promise<CreateParameterDTO[]> {
+    return await this.readDataFromJSON();
   }
 
-  remove(id: number): void {
-    console.log(`Delete parameter ${id}`);
+  async writeDataToFile(dataToSave: CreateParameterDTO[]): Promise<void> {
+    try {
+      const jsonData = JSON.stringify(dataToSave, null, 2);
+      await fs.writeFile(this.dataFilePath, jsonData, 'utf8');
+      console.log('Данные сохранены в data.json');
+    } catch (error) {
+      console.error('Ошибка при сохранении data.json:', error);
+      throw new InternalServerErrorException(
+        'Не удалось сохранить данные показателей.',
+      );
+    }
+  }
+
+  async saveAll(newParameters: CreateParameterDTO[]): Promise<void> {
+    await this.writeDataToFile(newParameters);
+  }
+
+  addParameter(newParameter: CreateParameterDTO): void {
+    console.log('Надо добавить парметр: ', newParameter);
+  }
+
+  removeParameter(id: number): void {
+    console.log(`Надо удалить как-то параметр с id: ${id}`);
   }
 }
