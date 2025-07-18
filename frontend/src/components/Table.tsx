@@ -45,60 +45,58 @@ export const Table = () => {
 
 	return (
 		<div className="table__container">
-			<div className="table__wrapper">
-				<table className="table">
-					<thead className="table__head">
-						<tr>
-							<th className="fixed table__measure">Показатель</th>
-							<th className="fixed table__units">ед.изм.</th>
-							{years.map((year) => (
-								<th className="scroll-header" key={year}>
-									{year}
-								</th>
-							))}
-						</tr>
-					</thead>
-					<tbody>
-						{parameters.map((r) => (
-							<tr
-								key={r.id}
-								className={
-									selectedRow === r.id ? 'selected-row' : ''
-								}
-								onClick={() => handleRowClick(r.id)}
-							>
-								<td className="fixed table__measure col1">
-									{r.name}
-								</td>
-								<td className="fixed table__units col2">
-									{r.unit_name}
-								</td>
-								{years.map((year) => {
-									return (
-										<td
-											className="scroll-cell"
-											key={`${r.id}-${year}`}
-										>
-											<TableCellInput
-												initialValue={
-													r.meanings?.[year] ?? null
-												}
-												onValueChange={(value: any) =>
-													handleCellValueChange(
-														r.id,
-														year,
-														value,
-													)
-												}
-											/>
-										</td>
-									);
-								})}
-							</tr>
+			<table className="table">
+				<thead className="table__head">
+					<tr>
+						<th className="fixed table__measure">Показатель</th>
+						<th className="fixed table__units">ед.изм.</th>
+						{years.map((year) => (
+							<th className="scroll-header" key={year}>
+								{year}
+							</th>
 						))}
-					</tbody>
-				</table>
-			</div>
+					</tr>
+				</thead>
+				<tbody>
+					{parameters.map((r) => (
+						<tr
+							key={r.id}
+							className={
+								selectedRow === r.id ? 'selected-row' : ''
+							}
+							onClick={() => handleRowClick(r.id)}
+						>
+							<td className="fixed table__measure col1">
+								{r.name}
+							</td>
+							<td className="fixed table__units col2">
+								{r.unit_name}
+							</td>
+							{years.map((year) => {
+								return (
+									<td
+										className="scroll-cell"
+										key={`${r.id}-${year}`}
+									>
+										<TableCellInput
+											initialValue={
+												r.meanings?.[year] ?? null
+											}
+											onValueChange={(value: any) =>
+												handleCellValueChange(
+													r.id,
+													year,
+													value,
+												)
+											}
+										/>
+									</td>
+								);
+							})}
+						</tr>
+					))}
+				</tbody>
+			</table>
 		</div>
 	);
 };
