@@ -1,17 +1,14 @@
 import { useEffect } from 'react';
 import './Table.css';
-import useParameterStore from '../store/parameters.store';
+import useParametersStore from '../store/parameters.store';
 import { TableCellInput } from './TableCellInput';
 
 export const Table = () => {
-	const {
-		parameters,
-		error,
-		selectedRow,
-		fetchParameters,
-		updateParameter,
-		setSelectedRow,
-	} = useParameterStore();
+	const parameters = useParametersStore((state) => state.getAllParameters());
+	const error = useParametersStore((state) => state.error);
+	const selectedRowId = useParametersStore((state) => state.selectedRowId);
+	const { fetchParameters, updateParameter, setSelectedRow } =
+		useParametersStore.getState();
 
 	const startYear = 2026;
 	const endYear = 2040;
@@ -21,7 +18,6 @@ export const Table = () => {
 
 	const handleRowClick = (id: number) => {
 		setSelectedRow(id);
-		console.log(id);
 	};
 
 	useEffect(() => {
@@ -62,7 +58,7 @@ export const Table = () => {
 						<tr
 							key={r.id}
 							className={
-								selectedRow === r.id ? 'selected-row' : ''
+								selectedRowId === r.id ? 'selected-row' : ''
 							}
 							onClick={() => handleRowClick(r.id)}
 						>

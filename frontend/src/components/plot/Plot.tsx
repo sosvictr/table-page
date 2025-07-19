@@ -7,16 +7,16 @@ import {
 	defaultChartOptions,
 } from '../../config/chart.config';
 import { useChartData } from '../../hooks/useChartData';
-import useParameterStore from '../../store/parameters.store';
+import useParametersStore from '../../store/parameters.store';
 
 registerChartJS();
 
 export const Plot: React.FC = () => {
-	const { selectedPlotId } = useParameterStore();
-	const { IParameter: parameterData, chartData } =
-		useChartData(selectedPlotId);
+	const selectedPlotId = useParametersStore((state) => state.selectedPlotId);
 
-	if (!parameterData || !chartData) {
+	const { chartData } = useChartData(selectedPlotId);
+
+	if (!chartData) {
 		return (
 			<div
 				className="plot-container"
@@ -28,7 +28,7 @@ export const Plot: React.FC = () => {
 					fontSize: '40px',
 				}}
 			>
-				Loading
+				Данные загружаются...
 			</div>
 		);
 	}

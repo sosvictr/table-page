@@ -1,15 +1,16 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
 import './Tabs.css';
-import useParameterStore from '../store/parameters.store';
+import useParametersStore from '../store/parameters.store';
 
 export const Tabs = () => {
-	const { selectedPlotId, setSelectedPlotId } = useParameterStore();
+	const selectedPlotId = useParametersStore((state) => state.selectedPlotId);
+	const parameters = useParametersStore((state) => state.getAllParameters());
+	const { setSelectedPlotId, fetchParameters } =
+		useParametersStore.getState();
 
-	const tabButtons = [
-		{ id: 1, name: 'Газ (вал.)' },
-		{ id: 3, name: 'Конденсат (нестаб.)' },
-		{ id: 6, name: 'Пик' },
-	];
+	const tabButtons = useMemo(() => {
+		return parameters.map((param) => ({ id: param.id, name: param.name }));
+	}, [parameters]);
 
 	useEffect(() => {
 		if (selectedPlotId === null && tabButtons.length > 0) {

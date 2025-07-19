@@ -2,60 +2,86 @@ import { create } from 'zustand';
 import { IParameter } from '../interfaces/parameter.interface';
 import parameterService from '../services/parameter.service';
 
-interface IUseParameterStore {
+interface IParameterState {
 	parameters: IParameter[];
-	selectedRow: number | null;
-	error: null | unknown;
+	selectedRowId: number | null;
 	selectedPlotId: number | null;
 
-	fetchParameters: () => void;
-	setSelectedRow: (id: number) => void;
-	updateParameter: (id: number, year: string, value: any | null) => void;
-	setSelectedPlotId: (id: number | null) => void;
+	error: string | null;
 }
 
-const useParameterStore = create<IUseParameterStore>((set) => ({
+interface IParameterActions {
+	fetchParameters: () => Promise<void>;
+	updateParameter: (id: number, year: string, value: any | null) => void;
+	setSelectedRow: (id: number) => void;
+	setSelectedPlotId: (id: number | null) => void;
+	getParameterById: (id: number) => IParameter | undefined;
+	getAllParameters: () => IParameter[];
+	deleteParameter: (id: number) => void;
+}
+
+const initialState: IParameterState = {
 	parameters: [],
-	selectedRow: null,
+	selectedRowId: null,
 	selectedPlotId: 1,
 	error: null,
+};
 
-	fetchParameters: () => {
-		set({ error: null });
-		parameterService
-			.findAll()
-			.then((parameters) => set({ parameters }))
-			.catch((error) => {
-				console.log({ error });
-				set({ error });
-			});
-	},
+const useParametersStore = create<IParameterActions & IParameterState>(
+	(set, get) => ({
+		...initialState,
 
-	setSelectedRow: (id) => {
-		set((state) => ({
-			selectedRow: state.selectedRow === id ? null : id,
-		}));
-	},
+		fetchParameters: async () => {
+			set({ error: null });
+			try {
+				const paramsArray = await parameterService.getAll();
+				set({ parameters: paramsArray });
+			} catch (error: any) {
+				console.error('Failed to fetch parameters:', error);
+				set({
+					error: error.message || 'An unknown error occurred',
+				});
+			}
+		},
 
-	updateParameter: (id, year, value) => {
-		set((state) => ({
-			parameters: state.parameters.map((param) =>
-				param.id === id
-					? {
-							...param,
-							meanings: {
-								...param.meanings,
-								[year]: value,
-							},
-					  }
-					: param,
-			),
-		}));
-	},
+		setSelectedRow: (id) => {
+			set((state) => ({
+				selectedRowId: state.selectedRowId === id ? null : id,
+			}));
+		},
 
-	setSelectedPlotId: (id) => {
-		set({ selectedPlotId: id });
-	},
-}));
+		setSelectedPlotId: (id) => {
+			set({ selectedPlotId: id });
+		},
 
-export default useParameterStore;
+		updateParameter: (id, year, value) => {
+			set((state) => ({
+				parameters: state.parameters.map((param) =>
+					param.id === id
+						? {
+								...param,
+								meanings: {
+									...param.meanings,
+									[year]: value,
+								},
+						  }
+						: param,
+				),
+			}));
+		},
+
+		getParameterById: (id) =>
+			get().parameters.find((param) => param.id === id),
+
+		getAllParameters: () => get().parameters,
+
+		deleteParameter: (id) =>
+			set((state) => ({
+				parameters: state.parameters.filter(
+					(parameter) => parameter.id !== id,
+				),
+			})),
+	}),
+);
+
+export default useParametersStore;

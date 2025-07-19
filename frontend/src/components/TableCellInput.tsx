@@ -25,7 +25,6 @@ export const TableCellInput: React.FC<ITableCellProps> = ({
 		if (inputValue === '-') {
 			setInputValue('');
 		}
-		console.log(initialValue);
 	};
 
 	const handleInputBlur = () => {

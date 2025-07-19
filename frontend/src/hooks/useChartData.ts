@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { IParameter } from '../interfaces/parameter.interface';
-import useParameterStore from '../store/parameters.store';
+import useParametersStore from '../store/parameters.store';
 
 export const useChartData = (parameterId: number | null) => {
-	const { parameters } = useParameterStore();
+	const parameters = useParametersStore((state) => state.getAllParameters());
 
 	const parameterData = useMemo(() => {
 		if (parameterId === null) {

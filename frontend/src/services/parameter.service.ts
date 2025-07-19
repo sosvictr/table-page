@@ -4,7 +4,7 @@ import { httpService } from './http.service';
 const parameterEndPoint = 'parameters';
 
 const parameterService = {
-	findAll: async (): Promise<IParameter[]> => {
+	getAll: async (): Promise<IParameter[]> => {
 		const { data } = await httpService.get(`${parameterEndPoint}`);
 		return data;
 	},
