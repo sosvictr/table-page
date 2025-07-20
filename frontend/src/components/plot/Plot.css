@@ -1,6 +1,7 @@
 .plot-container {
 	padding-top: 10px;
 	width: 952px;
+	min-height: 100%;
 	height: 215px;
 	max-width: 100%;
 	margin: 0 auto;

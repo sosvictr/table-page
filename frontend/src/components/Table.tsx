@@ -76,7 +76,8 @@ export const Table = () => {
 									>
 										<TableCellInput
 											initialValue={
-												r.meanings?.[year] ?? null
+												String(r.meanings?.[year]) ??
+												null
 											}
 											onValueChange={(value: any) =>
 												handleCellValueChange(

@@ -1,4 +1,4 @@
 export interface ITableCellProps {
-	initialValue: number | null;
+	initialValue: string | null;
 	onValueChange: (value: string) => void;
 }
