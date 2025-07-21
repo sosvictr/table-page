@@ -6,13 +6,15 @@ export const TableCellInput: React.FC<ITableCellProps> = ({
 	onValueChange,
 }) => {
 	const [inputValue, setInputValue] = useState<string>(
-		initialValue === null ? '-' : initialValue,
+		initialValue === null || undefined ? '-' : String(initialValue),
 	);
 	const [isFocused, setIsFocused] = useState(false);
 
 	useEffect(() => {
 		if (!isFocused) {
-			setInputValue(initialValue === null ? '-' : initialValue);
+			setInputValue(
+				initialValue === null || undefined ? '-' : String(initialValue),
+			);
 		}
 	}, [initialValue, isFocused]);
 

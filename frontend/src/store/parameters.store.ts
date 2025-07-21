@@ -13,10 +13,15 @@ interface IParameterState {
 interface IParameterActions {
 	fetchParameters: () => Promise<void>;
 	updateParameter: (id: number, year: string, value: any | null) => void;
+	updateParameterName: (
+		id: number,
+		details: { name?: string; unit_name?: string },
+	) => void;
 	setSelectedRow: (id: number) => void;
 	setSelectedPlotId: (id: number | null) => void;
 	getParameterById: (id: number) => IParameter | undefined;
 	getAllParameters: () => IParameter[];
+	addParameter: () => void;
 	deleteParameter: (id: number) => void;
 }
 
@@ -70,13 +75,43 @@ const useParametersStore = create<IParameterActions & IParameterState>(
 			}));
 		},
 
+		updateParameterName: (id, details) => {
+			set((state) => ({
+				parameters: state.parameters.map((param) =>
+					param.id === id ? { ...param, ...details } : param,
+				),
+			}));
+		},
+
 		getParameterById: (id) =>
 			get().parameters.find((param) => param.id === id),
 
 		getAllParameters: () => get().parameters,
 
+		addParameter: () => {
+			set((state) => {
+				const newId =
+					state.parameters.length > 0
+						? Math.max(...state.parameters.map((p) => p.id)) + 1
+						: 1;
+
+				const newParameter: IParameter = {
+					id: newId,
+					name: `Показатель ${newId}`,
+					unit_name: '-',
+					meanings: {},
+				};
+
+				return {
+					parameters: [...state.parameters, newParameter],
+				};
+			});
+		},
+
 		deleteParameter: (id) =>
 			set((state) => ({
+				selectedRowId:
+					state.selectedRowId === id ? null : state.selectedRowId,
 				parameters: state.parameters.filter(
 					(parameter) => parameter.id !== id,
 				),

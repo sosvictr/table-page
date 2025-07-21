@@ -1,14 +1,19 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import './Table.css';
 import useParametersStore from '../store/parameters.store';
 import { TableCellInput } from './TableCellInput';
+import React from 'react';
 
 export const Table = () => {
 	const parameters = useParametersStore((state) => state.getAllParameters());
 	const error = useParametersStore((state) => state.error);
 	const selectedRowId = useParametersStore((state) => state.selectedRowId);
-	const { fetchParameters, updateParameter, setSelectedRow } =
-		useParametersStore.getState();
+	const {
+		fetchParameters,
+		updateParameter,
+		updateParameterName,
+		setSelectedRow,
+	} = useParametersStore.getState();
 
 	const startYear = 2026;
 	const endYear = 2040;
@@ -42,12 +47,12 @@ export const Table = () => {
 	return (
 		<div className="table__container">
 			<table className="table">
-				<thead className="table__head">
+				<thead className="fixed table__head">
 					<tr>
 						<th className="fixed table__measure">Показатель</th>
 						<th className="fixed table__units">ед.изм.</th>
 						{years.map((year) => (
-							<th className="scroll-header" key={year}>
+							<th className="fixed header" key={year}>
 								{year}
 							</th>
 						))}
@@ -63,10 +68,28 @@ export const Table = () => {
 							onClick={() => handleRowClick(r.id)}
 						>
 							<td className="fixed table__measure col1">
-								{r.name}
+								<input
+									type="text"
+									value={r.name}
+									onChange={(e) =>
+										updateParameterName(r.id, {
+											name: e.target.value,
+										})
+									}
+									className="input"
+								/>
 							</td>
 							<td className="fixed table__units col2">
-								{r.unit_name}
+								<input
+									type="text"
+									value={r.unit_name}
+									onChange={(e) =>
+										updateParameterName(r.id, {
+											unit_name: e.target.value,
+										})
+									}
+									className="input"
+								/>
 							</td>
 							{years.map((year) => {
 								return (
@@ -76,8 +99,7 @@ export const Table = () => {
 									>
 										<TableCellInput
 											initialValue={
-												String(r.meanings?.[year]) ??
-												null
+												r.meanings?.[year] ?? null
 											}
 											onValueChange={(value: any) =>
 												handleCellValueChange(
