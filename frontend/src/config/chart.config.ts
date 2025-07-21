@@ -67,6 +67,9 @@ export const defaultChartOptions = {
 				display: false,
 			},
 			beginAtZero: false,
+			afterFit(scale: any) {
+				scale.width = 35;
+			},
 			grid: {
 				lineWidth: 1,
 				color: (ctx: any) => {
