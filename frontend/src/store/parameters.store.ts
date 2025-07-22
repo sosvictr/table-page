@@ -58,7 +58,7 @@ const useParametersStore = create<IParameterActions & IParameterState>(
 					error: null,
 				});
 			} catch (error: any) {
-				set({ error: error.message || 'An unknown error occurred' });
+				set({ error: error.message || 'Неизвестная ошибка' });
 			}
 		},
 
@@ -115,7 +115,7 @@ const useParametersStore = create<IParameterActions & IParameterState>(
 			set((state) => {
 				const newParameter: IParameterWithStatus = {
 					id: -Date.now(),
-					name: `-`,
+					name: `Новый показатель`,
 					unit_name: '-',
 					meanings: {},
 					status: 'new',
