@@ -68,7 +68,7 @@ export const defaultChartOptions = {
 			},
 			beginAtZero: false,
 			afterFit(scale: any) {
-				scale.width = 35;
+				scale.width = 40;
 			},
 			grid: {
 				lineWidth: 1,
@@ -94,7 +94,7 @@ export const defaultChartOptions = {
 			},
 			ticks: {
 				padding: 10,
-				stepSize: 200,
+				maxTicksLimit: 5,
 				callback: function (value: string | number, index: number) {
 					if (typeof index === 'number' && index === 0) {
 						return '';
