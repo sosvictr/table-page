@@ -1,9 +1,12 @@
 import { useMemo } from 'react';
 import { IParameter } from '../interfaces/parameter.interface';
 import useParametersStore from '../store/parameters.store';
+import { useShallow } from 'zustand/react/shallow';
 
 export const useChartData = (parameterId: number | null) => {
-	const parameters = useParametersStore((state) => state.getAllParameters());
+	const parameters = useParametersStore(
+		useShallow((state) => state.getExistingParameters()),
+	);
 
 	const parameterData = useMemo(() => {
 		if (parameterId === null) {

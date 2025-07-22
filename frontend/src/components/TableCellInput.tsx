@@ -1,19 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { ITableCellProps } from '../interfaces/tablecell.interface';
 
-export const TableCellInput: React.FC<ITableCellProps> = ({
-	initialValue,
-	onValueChange,
-}) => {
+export const TableCellInput: React.FC<{
+	initialValue: number | null;
+	onValueChange: (value: string) => void;
+}> = ({ initialValue, onValueChange }) => {
 	const [inputValue, setInputValue] = useState<string>(
-		initialValue === null || undefined ? '-' : String(initialValue),
+		initialValue === null || initialValue === undefined
+			? '-'
+			: String(initialValue),
 	);
 	const [isFocused, setIsFocused] = useState(false);
 
 	useEffect(() => {
 		if (!isFocused) {
 			setInputValue(
-				initialValue === null || undefined ? '-' : String(initialValue),
+				initialValue === null || initialValue === undefined
+					? '-'
+					: String(initialValue),
 			);
 		}
 	}, [initialValue, isFocused]);

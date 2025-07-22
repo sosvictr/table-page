@@ -2,12 +2,17 @@ import {
   Body,
   Controller,
   Get,
-  Put,
+  Post,
+  Patch,
+  Delete,
+  Param,
   HttpCode,
   HttpStatus,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { ParametersService } from './parameterFromJSON.service';
 import { CreateParameterDTO } from './dto/create-parameter.dto';
+import { UpdateParameterDTO } from './dto/update-parameter.dto';
 
 @Controller('parameters')
 export class ParametersController {
@@ -15,26 +20,28 @@ export class ParametersController {
 
   @Get()
   @HttpCode(HttpStatus.OK)
-  async getAll() {
-    return await this.parameterService.getAll();
+  getAll() {
+    return this.parameterService.getAll();
   }
 
-  @Put()
+  @Post()
+  @HttpCode(HttpStatus.CREATED)
+  async create(@Body() createParameter: Omit<CreateParameterDTO, 'id'>) {
+    return await this.parameterService.create(createParameter);
+  }
+
+  @Patch(':id')
   @HttpCode(HttpStatus.OK)
-  replaceAll(@Body() newParameters: CreateParameterDTO[]) {
-    this.parameterService.saveAll(newParameters);
-    return { message: 'Переписали' };
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() updateParameter: UpdateParameterDTO,
+  ) {
+    return await this.parameterService.update(id, updateParameter);
   }
 
-  // @Post()
-  // @HttpCode(HttpStatus.CREATED)
-  // addParameter(@Body() createParameter: CreateParameterDTO) {
-  //   return { message: 'Добавили' };
-  // }
-
-  // @Delete(':id')
-  // @HttpCode(HttpStatus.NO_CONTENT)
-  // removeParameter(@Param('id', ParseIntPipe) id: number) {
-  //   return { message: 'Удалили' };
-  // }
+  @Delete(':id')
+  @HttpCode(HttpStatus.NO_CONTENT)
+  async remove(@Param('id', ParseIntPipe) id: number) {
+    await this.parameterService.remove(id);
+  }
 }

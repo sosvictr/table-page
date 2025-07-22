@@ -1,17 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import './Table.css';
 import useParametersStore from '../store/parameters.store';
 import { TableCellInput } from './TableCellInput';
-import React from 'react';
+import { useShallow } from 'zustand/shallow';
 
 export const Table = () => {
-	const parameters = useParametersStore((state) => state.getAllParameters());
+	const parameters = useParametersStore(
+		useShallow((state) => state.getExistingParameters()),
+	);
 	const error = useParametersStore((state) => state.error);
 	const selectedRowId = useParametersStore((state) => state.selectedRowId);
 	const {
 		fetchParameters,
 		updateParameter,
-		updateParameterName,
+		updateParameterDetails,
 		setSelectedRow,
 	} = useParametersStore.getState();
 
@@ -72,7 +74,7 @@ export const Table = () => {
 									type="text"
 									value={r.name}
 									onChange={(e) =>
-										updateParameterName(r.id, {
+										updateParameterDetails(r.id, {
 											name: e.target.value,
 										})
 									}
@@ -84,7 +86,7 @@ export const Table = () => {
 									type="text"
 									value={r.unit_name}
 									onChange={(e) =>
-										updateParameterName(r.id, {
+										updateParameterDetails(r.id, {
 											unit_name: e.target.value,
 										})
 									}

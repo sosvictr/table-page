@@ -1,4 +1,5 @@
 import { IParameter } from '../interfaces/parameter.interface';
+import { IParameterWithStatus } from '../interfaces/parameterWithStatus.interface';
 import { httpService } from './http.service';
 
 const parameterEndPoint = 'parameters';
@@ -9,16 +10,28 @@ const parameterService = {
 		return data;
 	},
 
-	// create: async (parameter: Partial<IParameter>): Promise<void> => {
-	// 	await httpService.post(parameterEndPoint, parameter);
-	// }, ///как?
+	create: async (
+		newParameter: Omit<IParameterWithStatus, 'id' | 'status'>,
+	): Promise<IParameter> => {
+		const { data } = await httpService.post(
+			`${parameterEndPoint}`,
+			newParameter,
+		);
+		return data;
+	},
 
-	// remove: async (id: string): Promise<void> => {
-	// 	await httpService.delete(`${parameterEndPoint}${id}`);
-	// }, //?????
+	update: async (
+		updatedParameter: Omit<IParameterWithStatus, 'status'>,
+	): Promise<IParameter> => {
+		const { data } = await httpService.patch(
+			`${parameterEndPoint}/${updatedParameter.id}`,
+			updatedParameter,
+		);
+		return data;
+	},
 
-	save: async (parametersToSave: IParameter[]): Promise<void> => {
-		await httpService.put(`${parameterEndPoint}`, parametersToSave);
+	remove: async (id: number): Promise<void> => {
+		await httpService.delete(`${parameterEndPoint}/${id}`);
 	},
 };
 

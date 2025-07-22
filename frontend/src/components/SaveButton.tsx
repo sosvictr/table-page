@@ -1,11 +1,17 @@
 import './SaveButton.css';
 import useParametersStore from '../store/parameters.store';
-import parameterService from '../services/parameter.service';
+import { useShallow } from 'zustand/react/shallow';
 
 export const SaveButton = () => {
-	const parameters = useParametersStore((state) => state.getAllParameters());
+	const parameters = useParametersStore(
+		useShallow((state) => state.getExistingParameters()),
+	);
+
+	const { saveChanges } = useParametersStore.getState();
+
 	const handleSaveClick = async () => {
-		await parameterService.save(parameters);
+		// console.log(parameters);
+		saveChanges();
 	};
 
 	return (

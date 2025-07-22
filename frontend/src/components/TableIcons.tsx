@@ -5,7 +5,6 @@ import useParametersStore from '../store/parameters.store';
 
 export const TableIcons = () => {
 	const selectedRowId = useParametersStore((state) => state.selectedRowId);
-	const parameters = useParametersStore((state) => state.getAllParameters());
 	const { addParameter, deleteParameter } = useParametersStore.getState();
 
 	const handleDeleteClick = () => {

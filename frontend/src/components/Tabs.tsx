@@ -1,12 +1,14 @@
 import { useEffect, useMemo } from 'react';
 import './Tabs.css';
 import useParametersStore from '../store/parameters.store';
+import { useShallow } from 'zustand/react/shallow';
 
 export const Tabs = () => {
 	const selectedPlotId = useParametersStore((state) => state.selectedPlotId);
-	const parameters = useParametersStore((state) => state.getAllParameters());
-	const { setSelectedPlotId, fetchParameters } =
-		useParametersStore.getState();
+	const parameters = useParametersStore(
+		useShallow((state) => state.getExistingParameters()),
+	);
+	const { setSelectedPlotId } = useParametersStore.getState();
 
 	const tabButtons = useMemo(() => {
 		return parameters.map((param) => ({ id: param.id, name: param.name }));

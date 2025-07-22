@@ -1,9 +1,10 @@
 import { create } from 'zustand';
 import { IParameter } from '../interfaces/parameter.interface';
+import { IParameterWithStatus } from '../interfaces/parameterWithStatus.interface';
 import parameterService from '../services/parameter.service';
 
 interface IParameterState {
-	parameters: IParameter[];
+	parameters: IParameterWithStatus[];
 	selectedRowId: number | null;
 	selectedPlotId: number | null;
 
@@ -13,16 +14,22 @@ interface IParameterState {
 interface IParameterActions {
 	fetchParameters: () => Promise<void>;
 	updateParameter: (id: number, year: string, value: any | null) => void;
-	updateParameterName: (
+	updateParameterDetails: (
 		id: number,
 		details: { name?: string; unit_name?: string },
 	) => void;
+
 	setSelectedRow: (id: number) => void;
 	setSelectedPlotId: (id: number | null) => void;
+
 	getParameterById: (id: number) => IParameter | undefined;
-	getAllParameters: () => IParameter[];
+	getAllParameters: () => IParameterWithStatus[];
+	getExistingParameters: () => IParameterWithStatus[];
+
 	addParameter: () => void;
 	deleteParameter: (id: number) => void;
+
+	saveChanges: () => Promise<void>;
 }
 
 const initialState: IParameterState = {
@@ -37,15 +44,21 @@ const useParametersStore = create<IParameterActions & IParameterState>(
 		...initialState,
 
 		fetchParameters: async () => {
-			set({ error: null });
 			try {
 				const paramsArray = await parameterService.getAll();
-				set({ parameters: paramsArray });
-			} catch (error: any) {
-				console.error('Failed to fetch parameters:', error);
+				const parametersWithStatus = paramsArray.map(
+					(p: IParameter): IParameterWithStatus => ({
+						...p,
+						status: 'pristine',
+					}),
+				);
+
 				set({
-					error: error.message || 'An unknown error occurred',
+					parameters: parametersWithStatus,
+					error: null,
 				});
+			} catch (error: any) {
+				set({ error: error.message || 'An unknown error occurred' });
 			}
 		},
 
@@ -61,25 +74,31 @@ const useParametersStore = create<IParameterActions & IParameterState>(
 
 		updateParameter: (id, year, value) => {
 			set((state) => ({
-				parameters: state.parameters.map((param) =>
-					param.id === id
-						? {
-								...param,
-								meanings: {
-									...param.meanings,
-									[year]: value,
-								},
-						  }
-						: param,
-				),
+				parameters: state.parameters.map((param) => {
+					if (param.id === id) {
+						const newStatus =
+							param.status !== 'new' ? 'updated' : 'new';
+						return {
+							...param,
+							status: newStatus,
+							meanings: { ...param.meanings, [year]: value },
+						};
+					}
+					return param;
+				}),
 			}));
 		},
 
-		updateParameterName: (id, details) => {
+		updateParameterDetails: (id, details) => {
 			set((state) => ({
-				parameters: state.parameters.map((param) =>
-					param.id === id ? { ...param, ...details } : param,
-				),
+				parameters: state.parameters.map((param) => {
+					if (param.id === id) {
+						const newStatus =
+							param.status !== 'new' ? 'updated' : 'new';
+						return { ...param, ...details, status: newStatus };
+					}
+					return param;
+				}),
 			}));
 		},
 
@@ -88,23 +107,20 @@ const useParametersStore = create<IParameterActions & IParameterState>(
 
 		getAllParameters: () => get().parameters,
 
+		getExistingParameters: () => {
+			return get().parameters.filter((p) => p.status !== 'deleted');
+		},
+
 		addParameter: () => {
 			set((state) => {
-				const newId =
-					state.parameters.length > 0
-						? Math.max(...state.parameters.map((p) => p.id)) + 1
-						: 1;
-
-				const newParameter: IParameter = {
-					id: newId,
-					name: `Показатель ${newId}`,
+				const newParameter: IParameterWithStatus = {
+					id: -Date.now(),
+					name: `-`,
 					unit_name: '-',
 					meanings: {},
+					status: 'new',
 				};
-
-				return {
-					parameters: [...state.parameters, newParameter],
-				};
+				return { parameters: [...state.parameters, newParameter] };
 			});
 		},
 
@@ -112,10 +128,62 @@ const useParametersStore = create<IParameterActions & IParameterState>(
 			set((state) => ({
 				selectedRowId:
 					state.selectedRowId === id ? null : state.selectedRowId,
-				parameters: state.parameters.filter(
-					(parameter) => parameter.id !== id,
+				parameters: state.parameters.map((param) =>
+					param.id === id ? { ...param, status: 'deleted' } : param,
 				),
 			})),
+
+		saveChanges: async () => {
+			const { parameters } = get();
+			const changesPromises: Promise<any>[] = [];
+			const updatedParametersWithNewIds: IParameterWithStatus[] = [];
+
+			for (const param of parameters) {
+				try {
+					if (param.status === 'deleted') {
+						if (param.id > 0) {
+							changesPromises.push(
+								parameterService.remove(param.id),
+							);
+						}
+					} else if (param.status === 'new') {
+						const { id, status, ...rest } = param;
+						changesPromises.push(
+							parameterService
+								.create(rest)
+								.then((createdParam) => {
+									updatedParametersWithNewIds.push({
+										...createdParam,
+										status: 'pristine',
+									});
+									return createdParam;
+								}),
+						);
+					} else if (param.status === 'updated') {
+						const { status, ...rest } = param;
+						changesPromises.push(parameterService.update(rest));
+					} else if (param.status === 'pristine') {
+						updatedParametersWithNewIds.push(param);
+					}
+				} catch (error: any) {
+					set({
+						error:
+							error.message ||
+							'Ошибка при отправке данных на сервер',
+					});
+				}
+			}
+
+			try {
+				await Promise.allSettled(changesPromises);
+				await get().fetchParameters();
+				alert('Ура!');
+			} catch (error: any) {
+				set({
+					error: error.message || 'Ошибка при сохранении изменений',
+				});
+			}
+		},
 	}),
 );
 

@@ -1,14 +1,23 @@
-import { IsArray, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import {
+  IsNotEmpty,
+  IsNumber,
+  IsObject,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateParameterDTO {
   @IsNumber()
-  @IsNotEmpty()
-  id: number;
+  @IsOptional()
+  id?: number;
+
   @IsString()
   @IsNotEmpty()
   name: string;
-  @IsString()
+
+  @IsOptional()
   unit_name?: string;
-  @IsArray()
+  @IsObject()
+  @IsOptional()
   meanings?: number[];
 }
