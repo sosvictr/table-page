@@ -10,12 +10,8 @@ export const Table = () => {
 	);
 	const error = useParametersStore((state) => state.error);
 	const selectedRowId = useParametersStore((state) => state.selectedRowId);
-	const {
-		fetchParameters,
-		updateParameter,
-		updateParameterDetails,
-		setSelectedRow,
-	} = useParametersStore.getState();
+	const { fetchParameters, updateParameter, setSelectedRow } =
+		useParametersStore.getState();
 
 	const startYear = 2026;
 	const endYear = 2040;
@@ -74,9 +70,11 @@ export const Table = () => {
 									type="text"
 									value={r.name}
 									onChange={(e) =>
-										updateParameterDetails(r.id, {
-											name: e.target.value,
-										})
+										updateParameter(
+											r.id,
+											'name',
+											e.target.value,
+										)
 									}
 									className="input"
 								/>
@@ -86,9 +84,11 @@ export const Table = () => {
 									type="text"
 									value={r.unit_name}
 									onChange={(e) =>
-										updateParameterDetails(r.id, {
-											unit_name: e.target.value,
-										})
+										updateParameter(
+											r.id,
+											'unit_name',
+											e.target.value,
+										)
 									}
 									className="input"
 								/>

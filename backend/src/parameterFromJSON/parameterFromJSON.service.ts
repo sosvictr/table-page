@@ -33,7 +33,6 @@ export class ParametersService implements OnModuleInit {
         await fs.access(this.dataFilePath);
       } catch (error) {
         this.parameters = [];
-        return;
       }
       const rawData = await fs.readFile(this.dataFilePath, 'utf8');
       this.parameters = JSON.parse(rawData) as CreateParameterDTO[];
@@ -63,7 +62,7 @@ export class ParametersService implements OnModuleInit {
         ? Math.max(...this.parameters.map((p) => p.id || 0))
         : 0;
     const newId = maxId + 1;
-    const newParameter: CreateParameterDTO = { ...createDto, id: newId };
+    const newParameter: CreateParameterDTO = { id: newId, ...createDto };
     this.parameters.push(newParameter);
     await this.writeDataToFile();
     return newParameter;

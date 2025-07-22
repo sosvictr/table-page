@@ -13,10 +13,10 @@ interface IParameterState {
 
 interface IParameterActions {
 	fetchParameters: () => Promise<void>;
-	updateParameter: (id: number, year: string, value: any | null) => void;
-	updateParameterDetails: (
+	updateParameter: (
 		id: number,
-		details: { name?: string; unit_name?: string },
+		field: 'name' | 'unit_name' | string,
+		value: any | null,
 	) => void;
 
 	setSelectedRow: (id: number) => void;
@@ -72,30 +72,26 @@ const useParametersStore = create<IParameterActions & IParameterState>(
 			set({ selectedPlotId: id });
 		},
 
-		updateParameter: (id, year, value) => {
+		updateParameter: (id, field, value) => {
 			set((state) => ({
 				parameters: state.parameters.map((param) => {
 					if (param.id === id) {
 						const newStatus =
 							param.status !== 'new' ? 'updated' : 'new';
-						return {
-							...param,
-							status: newStatus,
-							meanings: { ...param.meanings, [year]: value },
-						};
-					}
-					return param;
-				}),
-			}));
-		},
-
-		updateParameterDetails: (id, details) => {
-			set((state) => ({
-				parameters: state.parameters.map((param) => {
-					if (param.id === id) {
-						const newStatus =
-							param.status !== 'new' ? 'updated' : 'new';
-						return { ...param, ...details, status: newStatus };
+						if (field === 'name' || field === 'unit_name') {
+							return {
+								...param,
+								[field]: value,
+								status: newStatus,
+							};
+						} else {
+							console.log(field);
+							return {
+								...param,
+								status: newStatus,
+								meanings: { ...param.meanings, [field]: value },
+							};
+						}
 					}
 					return param;
 				}),
@@ -124,14 +120,19 @@ const useParametersStore = create<IParameterActions & IParameterState>(
 			});
 		},
 
-		deleteParameter: (id) =>
+		deleteParameter: (id) => {
 			set((state) => ({
 				selectedRowId:
 					state.selectedRowId === id ? null : state.selectedRowId,
+				selectedPlotId:
+					state.selectedPlotId === id
+						? state.parameters[0].id
+						: state.selectedPlotId,
 				parameters: state.parameters.map((param) =>
 					param.id === id ? { ...param, status: 'deleted' } : param,
 				),
-			})),
+			}));
+		},
 
 		saveChanges: async () => {
 			const { parameters } = get();

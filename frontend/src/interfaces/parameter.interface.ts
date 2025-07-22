@@ -5,6 +5,6 @@ interface IMeaning {
 export interface IParameter {
 	id: number;
 	name: string;
-	unit_name: string;
+	unit_name?: string;
 	meanings?: IMeaning;
 }
