@@ -58,7 +58,7 @@ export const TableCellInput: React.FC<{
 			onChange={handleInputChange}
 			onFocus={handleInputFocus}
 			onBlur={handleInputBlur}
-			className={styles['input']}
+			className={styles.input}
 		/>
 	);
 };
