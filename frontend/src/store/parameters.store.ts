@@ -73,29 +73,33 @@ const useParametersStore = create<IParameterActions & IParameterState>(
 		},
 
 		updateParameter: (id, field, value) => {
-			set((state) => ({
-				parameters: state.parameters.map((param) => {
-					if (param.id === id) {
-						const newStatus =
-							param.status !== 'new' ? 'updated' : 'new';
-						if (field === 'name' || field === 'unit_name') {
-							return {
-								...param,
-								[field]: value,
-								status: newStatus,
-							};
-						} else {
-							console.log(field);
-							return {
+			set((state) => {
+				const index = state.parameters.findIndex(
+					(param) => param.id === id,
+				);
+				if (index === -1) return state;
+
+				const param = state.parameters[index];
+				const newStatus: 'new' | 'updated' | 'deleted' | 'pristine' =
+					param.status !== 'new' ? 'updated' : 'new';
+
+				const updatedParam: IParameterWithStatus =
+					field === 'name' || field === 'unit_name'
+						? { ...param, [field]: value, status: newStatus }
+						: {
 								...param,
 								status: newStatus,
 								meanings: { ...param.meanings, [field]: value },
-							};
-						}
-					}
-					return param;
-				}),
-			}));
+						  };
+
+				return {
+					parameters: [
+						...state.parameters.slice(0, index),
+						updatedParam,
+						...state.parameters.slice(index + 1),
+					],
+				};
+			});
 		},
 
 		getParameterById: (id) =>

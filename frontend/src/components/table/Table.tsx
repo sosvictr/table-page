@@ -1,8 +1,8 @@
-import { useEffect } from 'react';
+import { useEffect, useCallback, useMemo } from 'react';
 import styles from './Table.module.css';
 import useParametersStore from '../../store/parameters.store';
-import { TableCellInput } from './TableCellInput';
 import { useShallow } from 'zustand/shallow';
+import { TableRow } from './TableRow';
 
 export const Table = () => {
 	const parameters = useParametersStore(
@@ -13,30 +13,40 @@ export const Table = () => {
 	const { fetchParameters, updateParameter, setSelectedRow } =
 		useParametersStore.getState();
 
-	const startYear = 2026;
-	const endYear = 2040;
-	const years = Array.from({ length: endYear - startYear + 1 }, (_, i) =>
-		String(startYear + i),
+	const startYear = useMemo(() => 2026, []);
+	const endYear = useMemo(() => 2040, []);
+	const years = useMemo(
+		() =>
+			Array.from({ length: endYear - startYear + 1 }, (_, i) =>
+				String(startYear + i),
+			),
+		[startYear, endYear],
 	);
 
-	const handleRowClick = (id: number) => {
-		setSelectedRow(id);
-	};
+	const handleRowClick = useCallback(
+		(id: number) => {
+			setSelectedRow(id);
+		},
+		[setSelectedRow],
+	);
 
 	useEffect(() => {
 		fetchParameters();
 	}, [fetchParameters]);
 
-	const handleCellValueChange = (id: number, year: string, value: string) => {
-		let storeValue: number | null = null;
-		if (value === '') {
-			storeValue = null;
-		} else {
-			const numericValue = parseFloat(value);
-			storeValue = isNaN(numericValue) ? null : numericValue;
-		}
-		updateParameter(id, year, storeValue);
-	};
+	const handleCellValueChange = useCallback(
+		(id: number, year: string, value: string) => {
+			let storeValue: number | null = null;
+			if (value === '') {
+				storeValue = null;
+			} else {
+				const numericValue = parseFloat(value);
+				storeValue = isNaN(numericValue) ? null : numericValue;
+			}
+			updateParameter(id, year, storeValue);
+		},
+		[updateParameter],
+	);
 
 	if (error) {
 		return <div>Произошла ошибка при загрузке данных.</div>;
@@ -65,66 +75,14 @@ export const Table = () => {
 				</thead>
 				<tbody>
 					{parameters.map((r) => (
-						<tr
+						<TableRow
 							key={r.id}
-							className={
-								selectedRowId === r.id
-									? styles['selected-row']
-									: ''
-							}
-							onClick={() => handleRowClick(r.id)}
-						>
-							<td
-								className={`${styles.fixed} ${styles.measure} ${styles.col1}`}
-							>
-								<input
-									type="text"
-									value={r.name}
-									onChange={(e) =>
-										updateParameter(
-											r.id,
-											'name',
-											e.target.value,
-										)
-									}
-									className={styles['col-input']}
-								/>
-							</td>
-							<td
-								className={`${styles.fixed} ${styles.units} ${styles.col2}`}
-							>
-								<input
-									type="text"
-									value={r.unit_name}
-									onChange={(e) =>
-										updateParameter(
-											r.id,
-											'unit_name',
-											e.target.value,
-										)
-									}
-									className={styles['col-input']}
-								/>
-							</td>
-							{years.map((year) => {
-								return (
-									<td key={`${r.id}-${year}`}>
-										<TableCellInput
-											initialValue={
-												r.meanings?.[year] ?? null
-											}
-											onValueChange={(value: any) =>
-												handleCellValueChange(
-													r.id,
-													year,
-													value,
-												)
-											}
-										/>
-									</td>
-								);
-							})}
-						</tr>
+							r={r}
+							selectedRowId={selectedRowId}
+							handleRowClick={handleRowClick}
+							years={years}
+							handleCellValueChange={handleCellValueChange}
+						/>
 					))}
 				</tbody>
 			</table>

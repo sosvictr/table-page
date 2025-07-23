@@ -4,10 +4,14 @@ import useParametersStore from '../store/parameters.store';
 import { useShallow } from 'zustand/react/shallow';
 
 export const useChartData = (parameterId: number | null) => {
-	const startYear = 2026;
-	const endYear = 2040;
-	const years = Array.from({ length: endYear - startYear + 1 }, (_, i) =>
-		String(startYear + i),
+	const startYear = useMemo(() => 2026, []);
+	const endYear = useMemo(() => 2040, []);
+	const years = useMemo(
+		() =>
+			Array.from({ length: endYear - startYear + 1 }, (_, i) =>
+				String(startYear + i),
+			),
+		[startYear, endYear],
 	);
 	const parameters = useParametersStore(
 		useShallow((state) => state.getExistingParameters()),

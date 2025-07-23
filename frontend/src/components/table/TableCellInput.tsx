@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import styles from './TableCellInput.module.css';
 
 export const TableCellInput: React.FC<{
 	initialValue: number | null;
 	onValueChange: (value: string) => void;
-}> = ({ initialValue, onValueChange }) => {
+}> = React.memo(({ initialValue, onValueChange }) => {
 	const [inputValue, setInputValue] = useState<string>(
 		initialValue === null || initialValue === undefined
 			? '-'
@@ -22,18 +22,21 @@ export const TableCellInput: React.FC<{
 		}
 	}, [initialValue, isFocused]);
 
-	const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-		setInputValue(e.target.value);
-	};
+	const handleInputChange = useCallback(
+		(e: React.ChangeEvent<HTMLInputElement>) => {
+			setInputValue(e.target.value);
+		},
+		[setInputValue],
+	);
 
-	const handleInputFocus = () => {
+	const handleInputFocus = useCallback(() => {
 		setIsFocused(true);
 		if (inputValue === '-') {
 			setInputValue('');
 		}
-	};
+	}, [setIsFocused, setInputValue, inputValue]);
 
-	const handleInputBlur = () => {
+	const handleInputBlur = useCallback(() => {
 		setIsFocused(false);
 		let finalValue: string;
 
@@ -41,15 +44,17 @@ export const TableCellInput: React.FC<{
 			finalValue = '';
 			setInputValue('-');
 		} else {
-			finalValue = inputValue;
 			const numericValue = parseFloat(inputValue);
-			if (isNaN(numericValue) && inputValue !== '-') {
+			if (isNaN(numericValue)) {
 				setInputValue('-');
 				finalValue = '';
+			} else {
+				finalValue = String(numericValue);
+				setInputValue(String(numericValue));
 			}
 		}
 		onValueChange(finalValue);
-	};
+	}, [inputValue, onValueChange]);
 
 	return (
 		<input
@@ -61,4 +66,4 @@ export const TableCellInput: React.FC<{
 			className={styles.input}
 		/>
 	);
-};
+});
