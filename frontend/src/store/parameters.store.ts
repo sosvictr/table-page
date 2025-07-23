@@ -121,17 +121,29 @@ const useParametersStore = create<IParameterActions & IParameterState>(
 		},
 
 		deleteParameter: (id) => {
-			set((state) => ({
-				selectedRowId:
-					state.selectedRowId === id ? null : state.selectedRowId,
-				selectedPlotId:
-					state.selectedPlotId === id
-						? state.parameters[0].id
-						: state.selectedPlotId,
-				parameters: state.parameters.map((param) =>
-					param.id === id ? { ...param, status: 'deleted' } : param,
-				),
-			}));
+			set((state) => {
+				let newSelectedPlotId = state.selectedPlotId;
+				if (state.selectedPlotId === id) {
+					const firstAvailableParam = state.parameters.find(
+						(p) => p.id !== id && p.status !== 'deleted',
+					);
+					newSelectedPlotId = firstAvailableParam
+						? firstAvailableParam.id
+						: newSelectedPlotId;
+				}
+
+				return {
+					parameters: state.parameters.map(
+						(param): IParameterWithStatus =>
+							param.id === id
+								? { ...param, status: 'deleted' }
+								: param,
+					),
+					selectedRowId:
+						state.selectedRowId === id ? null : state.selectedRowId,
+					selectedPlotId: newSelectedPlotId,
+				};
+			});
 		},
 
 		saveChanges: async () => {
