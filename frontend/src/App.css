@@ -5,6 +5,12 @@
 	box-sizing: border-box;
 }
 
+.app {
+	height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+
 .head {
 	height: 76px;
 }
@@ -21,8 +27,10 @@
 }
 
 hr {
-	width: 893px;
-	margin: 2px auto;
+	max-width: 893px;
+	width: 100%;
+	margin: 0 auto;
+	margin-bottom: 10px;
 	border: none;
 	height: 1px;
 	background-image: linear-gradient(
@@ -35,7 +43,19 @@ hr {
 	background-repeat: repeat-x;
 }
 
-.lower-container {
-	position: relative;
+.display-container {
+	flex-grow: 1;
 	display: flex;
+	flex-direction: column;
+}
+
+.lower-container {
+	flex-grow: 1;
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	justify-content: space-between;
+	padding-left: 181px;
+	padding-right: 36px;
+	padding-bottom: 18px;
 }

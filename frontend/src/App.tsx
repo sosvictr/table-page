@@ -17,7 +17,7 @@ function App() {
 			</div>
 			<div className="display-container">
 				<Tabs />
-				<hr></hr>
+				<hr className="hr"></hr>
 				<div className="lower-container">
 					<Plot />
 					<SaveButton />
