@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import styles from './TableCellInput.module.css';
 
 export const TableCellInput: React.FC<{
 	initialValue: number | null;
@@ -57,7 +58,7 @@ export const TableCellInput: React.FC<{
 			onChange={handleInputChange}
 			onFocus={handleInputFocus}
 			onBlur={handleInputBlur}
-			className="cell-input"
+			className={styles['input']}
 		/>
 	);
 };

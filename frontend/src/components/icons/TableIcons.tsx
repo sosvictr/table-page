@@ -1,7 +1,7 @@
-import './TableIcons.css';
-import icon2 from '../images/delete_row.svg';
-import icon1 from '../images/insert_row.svg';
-import useParametersStore from '../store/parameters.store';
+import styles from './TableIcons.module.css';
+import icon2 from '../../images/delete_row.svg';
+import icon1 from '../../images/insert_row.svg';
+import useParametersStore from '../../store/parameters.store';
 
 export const TableIcons = () => {
 	const selectedRowId = useParametersStore((state) => state.selectedRowId);
@@ -14,15 +14,15 @@ export const TableIcons = () => {
 	};
 
 	return (
-		<div className="icons">
+		<div className={styles.container}>
 			<img
-				className="icon-add"
+				className={styles.add}
 				src={icon1}
 				alt={'add'}
 				onClick={addParameter}
 			></img>
 			<img
-				className="icon-delete"
+				className={styles.delete}
 				src={icon2}
 				alt={'delete'}
 				onClick={handleDeleteClick}

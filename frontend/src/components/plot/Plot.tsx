@@ -1,6 +1,6 @@
 import React from 'react';
 import { Line } from 'react-chartjs-2';
-import './Plot.css';
+import styles from './Plot.module.css';
 
 import {
 	registerChartJS,
@@ -34,7 +34,7 @@ export const Plot: React.FC = () => {
 	}
 
 	return (
-		<div className="plot-container">
+		<div className={styles.container}>
 			<Line data={chartData} options={defaultChartOptions} />
 		</div>
 	);

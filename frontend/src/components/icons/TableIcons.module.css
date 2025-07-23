@@ -1,16 +1,16 @@
-.icons {
+.container {
 	display: flex;
 	height: 36px;
 }
 
-.icon-add {
+.add {
 	width: 24px;
 	height: 24px;
 	margin-right: 5px;
 	cursor: pointer;
 }
 
-.icon-delete {
+.delete {
 	width: 20px;
 	height: 24px;
 	cursor: pointer;

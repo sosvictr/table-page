@@ -190,7 +190,8 @@ const useParametersStore = create<IParameterActions & IParameterState>(
 			try {
 				await Promise.allSettled(changesPromises);
 				await get().fetchParameters();
-				alert('Ура!');
+				get().setSelectedPlotId(get().getExistingParameters()[0].id);
+				alert('Данные сохранены');
 			} catch (error: any) {
 				set({
 					error: error.message || 'Ошибка при сохранении изменений',

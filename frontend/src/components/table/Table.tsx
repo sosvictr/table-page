@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
-import './Table.css';
-import useParametersStore from '../store/parameters.store';
+import styles from './Table.module.css';
+import useParametersStore from '../../store/parameters.store';
 import { TableCellInput } from './TableCellInput';
 import { useShallow } from 'zustand/shallow';
 
@@ -43,14 +43,21 @@ export const Table = () => {
 	}
 
 	return (
-		<div className="table__container">
-			<table className="table">
-				<thead className="fixed table__head">
+		<div className={styles.container}>
+			<table className={styles.table}>
+				<thead className={`${styles.fixed} ${styles.head}`}>
 					<tr>
-						<th className="fixed table__measure">Показатель</th>
-						<th className="fixed table__units">ед.изм.</th>
+						<th className={`${styles.fixed} ${styles.measure}`}>
+							Показатель
+						</th>
+						<th className={`${styles.fixed} ${styles.units}`}>
+							ед.изм.
+						</th>
 						{years.map((year) => (
-							<th className="fixed header" key={year}>
+							<th
+								className={`${styles.fixed} ${styles.header}`}
+								key={year}
+							>
 								{year}
 							</th>
 						))}
@@ -61,11 +68,15 @@ export const Table = () => {
 						<tr
 							key={r.id}
 							className={
-								selectedRowId === r.id ? 'selected-row' : ''
+								selectedRowId === r.id
+									? styles['selected-row']
+									: ''
 							}
 							onClick={() => handleRowClick(r.id)}
 						>
-							<td className="fixed table__measure col1">
+							<td
+								className={`${styles.fixed} ${styles.measure} ${styles.col1}`}
+							>
 								<input
 									type="text"
 									value={r.name}
@@ -76,10 +87,12 @@ export const Table = () => {
 											e.target.value,
 										)
 									}
-									className="input"
+									className={styles['col-input']}
 								/>
 							</td>
-							<td className="fixed table__units col2">
+							<td
+								className={`${styles.fixed} ${styles.units} ${styles.col2}`}
+							>
 								<input
 									type="text"
 									value={r.unit_name}
@@ -90,15 +103,12 @@ export const Table = () => {
 											e.target.value,
 										)
 									}
-									className="input"
+									className={styles['col-input']}
 								/>
 							</td>
 							{years.map((year) => {
 								return (
-									<td
-										className="scroll-cell"
-										key={`${r.id}-${year}`}
-									>
+									<td key={`${r.id}-${year}`}>
 										<TableCellInput
 											initialValue={
 												r.meanings?.[year] ?? null

@@ -1,24 +1,24 @@
-import './App.css';
+import styles from './App.module.css';
 import { Plot } from './components/plot/Plot';
-import { SaveButton } from './components/SaveButton';
-import { Table } from './components/Table';
-import { TableIcons } from './components/TableIcons';
-import { Tabs } from './components/Tabs';
+import { SaveButton } from './components/button/SaveButton';
+import { Table } from './components/table/Table';
+import { TableIcons } from './components/icons/TableIcons';
+import { Tabs } from './components/tabs/Tabs';
 
 function App() {
 	return (
-		<div className="app">
-			<header className="head">
-				<h1 className="head__title">Месторождение</h1>
+		<div className={styles.app}>
+			<header className={styles.head}>
+				<h1 className={styles.title}>Месторождение</h1>
 			</header>
-			<div className="table-container">
+			<div className={styles.table}>
 				<TableIcons />
 				<Table />
 			</div>
-			<div className="display-container">
+			<div className={styles.display}>
 				<Tabs />
-				<hr className="hr"></hr>
-				<div className="lower-container">
+				<hr></hr>
+				<div className={styles.plot}>
 					<Plot />
 					<SaveButton />
 				</div>

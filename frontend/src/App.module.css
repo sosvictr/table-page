@@ -15,14 +15,14 @@
 	height: 76px;
 }
 
-.head__title {
+.title {
 	font-size: 17px;
 	font-weight: 600;
 	padding-top: 32px;
 	padding-left: 29px;
 }
 
-.table-container {
+.table {
 	padding-left: 29px;
 }
 
@@ -43,13 +43,13 @@ hr {
 	background-repeat: repeat-x;
 }
 
-.display-container {
+.display {
 	flex-grow: 1;
 	display: flex;
 	flex-direction: column;
 }
 
-.lower-container {
+.plot {
 	flex-grow: 1;
 	display: flex;
 	flex-direction: row;

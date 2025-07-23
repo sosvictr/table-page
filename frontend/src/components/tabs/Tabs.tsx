@@ -1,6 +1,6 @@
 import { useEffect, useMemo } from 'react';
-import './Tabs.css';
-import useParametersStore from '../store/parameters.store';
+import styles from './Tabs.module.css';
+import useParametersStore from '../../store/parameters.store';
 import { useShallow } from 'zustand/react/shallow';
 
 export const Tabs = () => {
@@ -25,12 +25,14 @@ export const Tabs = () => {
 	};
 
 	return (
-		<div className="tab-container">
+		<div className={styles.container}>
 			{tabButtons.map((button) => (
 				<button
 					key={button.id}
-					className={`tab ${
-						selectedPlotId === button.id ? 'selected' : 'disabled'
+					className={`${styles.tab} ${
+						selectedPlotId === button.id
+							? styles.selected
+							: styles.disabled
 					}`}
 					onClick={() => handleTabClick(button.id)}
 				>
